@@ -40,8 +40,8 @@ func (srv *APIServer) configureLogger() error {
 	}
 
 	srv.logger.SetLevel(lvl)
-	srv.logger.Info("Logger configure is success")
 
+	srv.logger.Info("Logger configure is success")
 	return nil
 }
 
