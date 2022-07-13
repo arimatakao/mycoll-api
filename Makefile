@@ -1,5 +1,5 @@
 all:
-	go run ./cmd/apiserver/main.go -config-path configs/config.toml
+	go run ./cmd/apiserver/main.go
 	
 build:
 	go build ./cmd/apiserver/main.go

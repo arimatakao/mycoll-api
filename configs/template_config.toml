@@ -1,0 +1,4 @@
+#set port
+bind_addr = ":8000"
+#set log level for logger (logrus)
+log_level = "debug"
