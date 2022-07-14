@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -10,7 +11,7 @@ import (
 )
 
 type Database struct {
-	client *mongo.Client
+	db *mongo.Database
 }
 
 func NewClient(ctx context.Context, uri string) Database {
@@ -23,6 +24,18 @@ func NewClient(ctx context.Context, uri string) Database {
 		log.Fatal(err)
 	}
 	return Database{
-		client: client,
+		db: client.Database("Mycoll"),
 	}
+}
+
+func (d *Database) CreateLinks(l Links) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+	links := d.db.Collection("Links")
+
+	result, err := links.InsertOne(ctx, l)
+	if err != nil {
+		log.Println("Cannot create links")
+	}
+	log.Println(result.InsertedID)
 }
