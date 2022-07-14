@@ -5,16 +5,18 @@ import (
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-type Database struct {
-	db *mongo.Database
+type Connection struct {
+	links *mongo.Collection
+	users *mongo.Collection
 }
 
-func NewDatabase(ctx context.Context, uri string) *Database {
+func NewDatabase(ctx context.Context, uri string) *Connection {
 	clientOptions := options.Client().ApplyURI(uri)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -23,20 +25,37 @@ func NewDatabase(ctx context.Context, uri string) *Database {
 	if err = client.Ping(ctx, readpref.Primary()); err != nil {
 		log.Fatal(err)
 	}
-	db := &Database{
-		db: client.Database("Mycoll"),
+	db := &Connection{
+		links: client.Database("Mycoll").Collection("Links"),
+		users: client.Database("Mycoll").Collection("Users"),
 	}
 	return db
 }
 
-func (d *Database) CreateLinks(l Links) {
+func (c *Connection) CreateLinks(l Links) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
-	links := d.db.Collection("Links")
 
-	result, err := links.InsertOne(ctx, l)
+	result, err := c.links.InsertOne(ctx, l)
 	if err != nil {
 		log.Println("Cannot create links")
 	}
 	log.Println(result.InsertedID)
+}
+
+func (c *Connection) ReadAllLinks() string {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
+	cursor, err := c.links.Find(ctx, bson.M{})
+	if err != nil {
+		log.Println("Links not found")
+	}
+
+	var links []bson.M
+	if err = cursor.All(ctx, &links); err != nil {
+		log.Println("Links not Found")
+	}
+	log.Println(links)
+	return " "
 }

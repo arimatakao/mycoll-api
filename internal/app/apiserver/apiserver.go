@@ -15,7 +15,7 @@ type APIServer struct {
 	cfg    *Config
 	logger *logrus.Logger
 	router *mux.Router
-	db     *database.Database
+	db     *database.Connection
 }
 
 func New(config *Config) *APIServer {
