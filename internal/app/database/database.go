@@ -14,7 +14,7 @@ type Database struct {
 	db *mongo.Database
 }
 
-func NewDatabase(ctx context.Context, uri string) Database {
+func NewDatabase(ctx context.Context, uri string) *Database {
 	clientOptions := options.Client().ApplyURI(uri)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -23,9 +23,10 @@ func NewDatabase(ctx context.Context, uri string) Database {
 	if err = client.Ping(ctx, readpref.Primary()); err != nil {
 		log.Fatal(err)
 	}
-	return Database{
+	db := &Database{
 		db: client.Database("Mycoll"),
 	}
+	return db
 }
 
 func (d *Database) CreateLinks(l Links) {
