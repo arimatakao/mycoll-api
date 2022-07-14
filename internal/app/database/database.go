@@ -9,7 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-// поменять чтобы возвращались коллекции а не клиент
 type Database struct {
 	client *mongo.Client
 }
