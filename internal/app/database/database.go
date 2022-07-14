@@ -70,3 +70,14 @@ func (c *Connection) UpdateAllLinks() {
 	}
 	log.Printf("Updated %v  Documents", result.ModifiedCount)
 }
+
+func (c *Connection) DeleteAllLinks() {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
+	result, err := c.links.DeleteMany(ctx, bson.M{})
+	if err != nil {
+		log.Println("Links not be deleted")
+	}
+	log.Printf("Delete %v Documents", result.DeletedCount)
+}
