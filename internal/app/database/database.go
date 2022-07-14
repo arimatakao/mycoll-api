@@ -16,7 +16,7 @@ type Connection struct {
 	users *mongo.Collection
 }
 
-func NewDatabase(ctx context.Context, uri string) *Connection {
+func NewConnection(ctx context.Context, uri string) *Connection {
 	clientOptions := options.Client().ApplyURI(uri)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {

@@ -23,7 +23,7 @@ func New(config *Config) *APIServer {
 		cfg:    config,
 		logger: logrus.New(),
 		router: mux.NewRouter(),
-		db:     database.NewDatabase(ctx, config.DBURI),
+		db:     database.NewConnection(ctx, config.DBURI),
 	}
 }
 
