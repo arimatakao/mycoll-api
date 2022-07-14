@@ -55,6 +55,7 @@ func (srv *APIServer) configureRouter() {
 	srv.router.HandleFunc("/api/v1/createlink", srv.handleCreateLinks())
 	srv.router.HandleFunc("/api/v1/readalllinks", srv.handleReadAllLinks())
 	srv.router.HandleFunc("/api/v1/updatealllinks", srv.handleUpdateAllLinks())
+	srv.router.HandleFunc("/api/v1/deletealllinks", srv.handleDeleteAllLinks())
 }
 
 func (srv *APIServer) handleHello() http.HandlerFunc {
@@ -78,5 +79,11 @@ func (srv *APIServer) handleReadAllLinks() http.HandlerFunc {
 func (srv *APIServer) handleUpdateAllLinks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "Update all links")
+	}
+}
+
+func (srv *APIServer) handleDeleteAllLinks() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, "Delete all links")
 	}
 }
