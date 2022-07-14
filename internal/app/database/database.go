@@ -59,3 +59,14 @@ func (c *Connection) ReadAllLinks() string {
 	log.Println(links)
 	return " "
 }
+
+func (c *Connection) UpdateAllLinks() {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
+	result, err := c.links.UpdateMany(ctx, "123", "123")
+	if err != nil {
+		log.Println("Links not updated")
+	}
+	log.Printf("Updated %v  Documents", result.ModifiedCount)
+}
