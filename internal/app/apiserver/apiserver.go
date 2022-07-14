@@ -8,7 +8,6 @@ import (
 	"github.com/arimatakao/mycoll-api/internal/app/database"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type APIServer struct {
@@ -54,25 +53,23 @@ func (srv *APIServer) configureLogger() error {
 func (srv *APIServer) configureRouter() {
 	srv.router.HandleFunc("/api/v1", srv.handleHello())
 	srv.router.HandleFunc("/api/v1/createlink", srv.handleCreateLinks())
+	srv.router.HandleFunc("/api/v1/readalllinks", srv.handleReadAllLinks())
 }
 
 func (srv *APIServer) handleHello() http.HandlerFunc {
-	// can add vars witch use 1 time
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "api v1")
 	}
 }
 
 func (srv *APIServer) handleCreateLinks() http.HandlerFunc {
-	link := database.Links{
-		Id:          primitive.NewObjectID(),
-		Links:       []string{"http://exaple.com"},
-		Name:        "Testname",
-		Description: "Testdescription",
-	}
-	srv.db.CreateLinks(link)
 	return func(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "Create link")
+	}
+}
+
+func (srv *APIServer) handleReadAllLinks() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, "Read all links")
 	}
 }
