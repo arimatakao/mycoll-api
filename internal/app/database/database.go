@@ -14,7 +14,7 @@ type Database struct {
 	db *mongo.Database
 }
 
-func NewClient(ctx context.Context, uri string) Database {
+func NewDatabase(ctx context.Context, uri string) Database {
 	clientOptions := options.Client().ApplyURI(uri)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
