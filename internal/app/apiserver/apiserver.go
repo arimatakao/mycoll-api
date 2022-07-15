@@ -53,7 +53,7 @@ func (srv *APIServer) configureLogger() error {
 func (srv *APIServer) configureRouter() {
 	srv.router.HandleFunc("/api/v1", srv.handleHello())
 	srv.router.HandleFunc("/api/v1/createlink", srv.handleCreateLinks()).Methods("POST")
-	srv.router.HandleFunc("/api/v1/findalllinks", srv.handleFindLinks()).Methods("GET")
+	srv.router.HandleFunc("/api/v1/findalllinks", srv.handleFindLinks()).Methods("POST")
 	srv.router.HandleFunc("/api/v1/updatealllinks", srv.handleUpdateLinks()).Methods("PUT")
 	srv.router.HandleFunc("/api/v1/deletealllinks", srv.handleDeleteLinks()).Methods("DELETE")
 }
