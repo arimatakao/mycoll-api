@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"log"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,73 +21,56 @@ func NewConnection(ctx context.Context, uri string) *Connection {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	if err = client.Ping(ctx, readpref.Primary()); err != nil {
 		log.Fatal(err)
 	}
-	db := &Connection{
+
+	return &Connection{
 		links: client.Database("Mycoll").Collection("Links"),
 		users: client.Database("Mycoll").Collection("Users"),
 	}
-	return db
 }
 
-func (c *Connection) CreateLinks(l Links) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
-	defer cancel()
-
-	result, err := c.links.InsertOne(ctx, l)
-	if err != nil {
-		log.Println("Cannot create links")
-	}
-	log.Println(result.InsertedID)
+func (c *Connection) CreateLinks(l *Links) bool {
+	_, err := c.links.InsertOne(context.TODO(), l)
+	return err == nil
 }
 
-func (c *Connection) ReadAllLinks() string {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
-	defer cancel()
-
-	cursor, err := c.links.Find(ctx, bson.M{})
+func (c *Connection) FindLinks(l *Links) *Links {
+	var result *Links
+	err := c.links.FindOne(context.TODO(), l).Decode(result)
 	if err != nil {
-		log.Println("Links not found")
+		return nil
 	}
-
-	var links []bson.M
-	if err = cursor.All(ctx, &links); err != nil {
-		log.Println("Links not Found")
-	}
-	log.Println(links)
-	return " "
+	return result
 }
 
-func (c *Connection) UpdateAllLinks() {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
-	defer cancel()
-
-	result, err := c.links.UpdateMany(ctx, "123", "123")
-	if err != nil {
-		log.Println("Links not updated")
-	}
-	log.Printf("Updated %v  Documents", result.ModifiedCount)
+func (c *Connection) UpdateLinks(filter bson.D, l *Links) bool {
+	_, err := c.links.UpdateOne(context.TODO(), filter, l)
+	return err == nil
 }
 
-func (c *Connection) DeleteAllLinks() {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
-	defer cancel()
-
-	result, err := c.links.DeleteMany(ctx, bson.M{})
-	if err != nil {
-		log.Println("Links not be deleted")
-	}
-	log.Printf("Delete %v Documents", result.DeletedCount)
+func (c *Connection) DeleteLinks(l *Links) bool {
+	_, err := c.links.DeleteOne(context.TODO(), l)
+	return err == nil
 }
 
-func (c *Connection) CreateUser(u User) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
-	defer cancel()
+func (c *Connection) CreateUser(u *User) bool {
+	_, err := c.links.InsertOne(context.TODO(), u)
+	return err == nil
+}
 
-	result, err := c.users.InsertOne(ctx, u)
+func (c *Connection) FindUser(u *User) *User {
+	var result *User
+	err := c.users.FindOne(context.TODO(), u).Decode(result)
 	if err != nil {
-		log.Println("Added new user")
+		return nil
 	}
-	log.Printf("Added %v users", result.InsertedID)
+	return result
+}
+
+func (c *Connection) DeleteUser(u *User) bool {
+	_, err := c.users.DeleteOne(context.TODO(), u)
+	return err == nil
 }
