@@ -53,9 +53,9 @@ func (srv *APIServer) configureLogger() error {
 func (srv *APIServer) configureRouter() {
 	srv.router.HandleFunc("/api/v1", srv.handleHello())
 	srv.router.HandleFunc("/api/v1/createlink", srv.handleCreateLinks()).Methods("POST")
-	srv.router.HandleFunc("/api/v1/readalllinks", srv.handleReadAllLinks()).Methods("GET")
-	srv.router.HandleFunc("/api/v1/updatealllinks", srv.handleUpdateAllLinks()).Methods("PUT")
-	srv.router.HandleFunc("/api/v1/deletealllinks", srv.handleDeleteAllLinks()).Methods("DELETE")
+	srv.router.HandleFunc("/api/v1/findalllinks", srv.handleFindLinks()).Methods("GET")
+	srv.router.HandleFunc("/api/v1/updatealllinks", srv.handleUpdateLinks()).Methods("PUT")
+	srv.router.HandleFunc("/api/v1/deletealllinks", srv.handleDeleteLinks()).Methods("DELETE")
 }
 
 func (srv *APIServer) handleHello() http.HandlerFunc {
@@ -70,20 +70,20 @@ func (srv *APIServer) handleCreateLinks() http.HandlerFunc {
 	}
 }
 
-func (srv *APIServer) handleReadAllLinks() http.HandlerFunc {
+func (srv *APIServer) handleFindLinks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "Read all links")
+		io.WriteString(w, "Find links")
 	}
 }
 
-func (srv *APIServer) handleUpdateAllLinks() http.HandlerFunc {
+func (srv *APIServer) handleUpdateLinks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "Update all links")
+		io.WriteString(w, "Update links")
 	}
 }
 
-func (srv *APIServer) handleDeleteAllLinks() http.HandlerFunc {
+func (srv *APIServer) handleDeleteLinks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "Delete all links")
+		io.WriteString(w, "Delete links")
 	}
 }
