@@ -81,3 +81,14 @@ func (c *Connection) DeleteAllLinks() {
 	}
 	log.Printf("Delete %v Documents", result.DeletedCount)
 }
+
+func (c *Connection) CreateUser(u User) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
+	result, err := c.users.InsertOne(ctx, u)
+	if err != nil {
+		log.Println("Added new user")
+	}
+	log.Printf("Added %v users", result.InsertedID)
+}
