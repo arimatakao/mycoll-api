@@ -7,8 +7,8 @@ import (
 type Links struct {
 	Id          primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
 	IdOwner     primitive.ObjectID `json:"id_owner" bson:"_id,omitempty"`
-	Links       []string           `json:"links" bson:"links,omitempty"`
 	Title       string             `json:"title" bson:"name,omitempty"`
+	Links       []string           `json:"links" bson:"links,omitempty"`
 	Description string             `json:"description" bson:"description,omitempty"`
 }
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -32,45 +31,34 @@ func NewConnection(ctx context.Context, uri string) *Connection {
 	}
 }
 
-func (c *Connection) CreateLinks(l *Links) bool {
-	_, err := c.links.InsertOne(context.TODO(), l)
-	return err == nil
+func (c *Connection) CreateLinks(idOwner, title string, links []string, description string) (int, error) {
+	return 0, nil
 }
 
-func (c *Connection) FindLinks(l *Links) *Links {
-	var result *Links
-	err := c.links.FindOne(context.TODO(), l).Decode(result)
-	if err != nil {
-		return nil
-	}
-	return result
+func (c *Connection) FindLinksById(id string) (int, error) {
+	return 0, nil
 }
 
-func (c *Connection) UpdateLinks(filter bson.D, l *Links) bool {
-	_, err := c.links.UpdateOne(context.TODO(), filter, l)
-	return err == nil
+func (c *Connection) FindLinksByIdOwner(idOwner string) (int, error) {
+	return 0, nil
 }
 
-func (c *Connection) DeleteLinks(l *Links) bool {
-	_, err := c.links.DeleteOne(context.TODO(), l)
-	return err == nil
+func (c *Connection) UpdateLinksById(id int) (int, error) {
+	return 0, nil
 }
 
-func (c *Connection) CreateUser(u *User) bool {
-	_, err := c.links.InsertOne(context.TODO(), u)
-	return err == nil
+func (c *Connection) DeleteLinksById(id int) (int, error) {
+	return 0, nil
 }
 
-func (c *Connection) FindUser(u *User) *User {
-	var result *User
-	err := c.users.FindOne(context.TODO(), u).Decode(result)
-	if err != nil {
-		return nil
-	}
-	return result
+func (c *Connection) CreateUser(name, password string) (int, error) {
+	return 0, nil
 }
 
-func (c *Connection) DeleteUser(u *User) bool {
-	_, err := c.users.DeleteOne(context.TODO(), u)
-	return err == nil
+func (c *Connection) FindUser(name string) (int, error) {
+	return 0, nil
+}
+
+func (c *Connection) DeleteUser(name, password string) (int, error) {
+	return 0, nil
 }
