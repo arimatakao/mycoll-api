@@ -68,7 +68,6 @@ func (c *Connection) IsUserExist(name string) bool {
 func (c *Connection) GetUserNamePassword(name, password string) (string, string) {
 	var user User
 	err := c.users.FindOne(context.TODO(), bson.D{{"name", name}, {"password", password}}).Decode(user)
-	log.Println("User: ", user.Name, "Password: ", user.Password)
 	if err != nil {
 		return "", ""
 	}
