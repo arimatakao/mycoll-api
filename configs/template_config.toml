@@ -4,3 +4,5 @@ bind_addr = ":8000"
 log_level = "debug"
 #set URI to database
 db_uri = "mongodb://mongodb0.example.com:27017"
+#set secret key for JWT
+secret_key = "your_secret_key"
