@@ -4,7 +4,7 @@ type Config struct {
 	BindAddr  string `toml:"bind_addr"`
 	LogLevel  string `toml:"log_lvl"`
 	DBURI     string `toml:"db_uri"`
-	SecretKey []byte `toml secret_key`
+	SecretKey []byte `toml:"secret_key"`
 }
 
 func NewConfig() *Config {
