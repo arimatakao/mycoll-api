@@ -22,7 +22,7 @@ func (srv *APIServer) newToken(nameUser string) string {
 	srv.logger.Info("Generated new token")
 	return tokenStr
 }
-func (srv *APIServer) validateToken(jwttoken string) bool {
+func (srv *APIServer) isTokenValid(jwttoken string) bool {
 	token, err := jwt.ParseWithClaims(
 		jwttoken,
 		jwt.StandardClaims{},
