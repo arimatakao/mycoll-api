@@ -4,7 +4,7 @@ type Config struct {
 	BindAddr  string `toml:"bind_addr"`
 	LogLevel  string `toml:"log_lvl"`
 	DBURI     string `toml:"db_uri"`
-	SecretKey []byte `toml:"secret_key"`
+	SecretKey string `toml:"secret_key"`
 }
 
 func NewConfig() *Config {
@@ -12,6 +12,6 @@ func NewConfig() *Config {
 		BindAddr:  ":8000",
 		LogLevel:  "debug",
 		DBURI:     "",
-		SecretKey: []byte("1111"),
+		SecretKey: "1111",
 	}
 }
