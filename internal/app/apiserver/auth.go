@@ -14,7 +14,7 @@ func (srv *APIServer) newToken(nameUser string) string {
 		jwt.StandardClaims{},
 		nameUser,
 	})
-	tokenStr, err := token.SignedString(srv.cfg.SecretKey)
+	tokenStr, err := token.SignedString([]byte(srv.cfg.SecretKey))
 	if err != nil {
 		srv.logger.Error("Fail to generate token")
 		return ""
@@ -27,7 +27,7 @@ func (srv *APIServer) isTokenValid(jwttoken string) bool {
 		jwttoken,
 		jwt.StandardClaims{},
 		func(token *jwt.Token) (interface{}, error) {
-			return srv.cfg.SecretKey, nil
+			return []byte(srv.cfg.SecretKey), nil
 		},
 	)
 	if err != nil {
