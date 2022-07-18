@@ -92,6 +92,7 @@ func (srv *APIServer) handleSignin() http.HandlerFunc {
 			return
 		}
 		io.WriteString(w, `{ "accessToken": "`+srv.newToken(req.Name)+`" }`)
+		srv.logger.Info("Token issued")
 	}
 }
 
@@ -122,6 +123,7 @@ func (srv *APIServer) handleDeleteUser() http.HandlerFunc {
 			return
 		}
 		io.WriteString(w, `{ "message": "Deleted is success" }`)
+		srv.logger.Info("One user was deleted")
 	}
 }
 
