@@ -6,13 +6,13 @@ import (
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	name string `json:"name"`
+	Id string `json:"_id" bson:"_id"`
 }
 
-func (srv *APIServer) newToken(nameUser string) string {
+func (srv APIServer) newToken(Id string) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.StandardClaims{},
-		nameUser,
+		Id,
 	})
 	tokenStr, err := token.SignedString([]byte(srv.cfg.SecretKey))
 	if err != nil {
@@ -22,7 +22,8 @@ func (srv *APIServer) newToken(nameUser string) string {
 	srv.logger.Info("Generated new token")
 	return tokenStr
 }
-func (srv *APIServer) isTokenValid(jwttoken string) bool {
+
+func (srv APIServer) isTokenValid(jwttoken string) bool {
 	token, err := jwt.ParseWithClaims(
 		jwttoken,
 		jwt.StandardClaims{},
@@ -34,4 +35,18 @@ func (srv *APIServer) isTokenValid(jwttoken string) bool {
 		return false
 	}
 	return token.Valid
+}
+
+func (srv APIServer) getClaimsFromJWT(jwttoken string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(jwttoken,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(srv.cfg.SecretKey), nil
+		})
+	if err != nil {
+		return nil, err
+	}
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims, nil
+	}
+	return nil, err
 }
