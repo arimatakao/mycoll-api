@@ -98,7 +98,7 @@ func (srv *APIServer) handleSignin() http.HandlerFunc {
 			return
 		}
 
-		io.WriteString(w, `{ "accessToken": "`+srv.newToken(req.Name)+`" }`)
+		io.WriteString(w, `{ "accessToken": "`+srv.newToken(srv.db.GetUserId(req.Name))+`" }`)
 		srv.logger.Info("Token issued")
 	}
 }
@@ -110,6 +110,7 @@ func (srv *APIServer) handleDeleteUser() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		var req request
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
