@@ -81,7 +81,6 @@ func (c *Connection) GetUserNamePassword(name string) (string, string) {
 	if err != nil {
 		return "", ""
 	}
-	log.Println(user.Name, user.Password)
 	return user.Name, user.Password
 }
 
