@@ -52,8 +52,8 @@ func (c *Connection) DeleteLinksById(id int) (int, error) {
 	return 0, nil
 }
 
-func (c *Connection) CreateUser(name, password string) (interface{}, error) {
-	result, err := c.users.InsertOne(context.TODO(), bson.D{{"name", name}, {"password", password}})
+func (c *Connection) CreateUser(name, passwordHash string) (interface{}, error) {
+	result, err := c.users.InsertOne(context.TODO(), bson.D{{"name", name}, {"password", passwordHash}})
 	if err != nil {
 		return result.InsertedID, err
 	}
@@ -65,15 +65,19 @@ func (c *Connection) IsUserExist(name string) bool {
 	return res.Err() != nil
 }
 
-func (c *Connection) GetUserNamePassword(name, password string) (string, string) {
+func (c *Connection) GetUserNamePassword(name, passwordHash string) (string, string) {
 	var user User
-	err := c.users.FindOne(context.TODO(), bson.D{{"name", name}, {"password", password}}).Decode(user)
+	err := c.users.FindOne(context.TODO(), bson.D{{"name", name}, {"password", passwordHash}}).Decode(user)
 	if err != nil {
 		return "", ""
 	}
 	return user.Name, user.Password
 }
 
-func (c *Connection) DeleteUser(name, password string) (int, error) {
-	return 0, nil
+func (c *Connection) DeleteUser(name, passwordHash string) int {
+	result, err := c.users.DeleteOne(context.TODO(), bson.D{{"name", name}, {"password", passwordHash}})
+	if err != nil {
+		return 0
+	}
+	return int(result.DeletedCount)
 }
