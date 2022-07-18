@@ -9,8 +9,21 @@ import (
 )
 
 func (srv *APIServer) handleHello() http.HandlerFunc {
+	type response struct {
+		Apiname    string `json:"api_name"`
+		Version    string `json:"version"`
+		Countusers int64  `json:"count_users"`
+		Countlinks int64  `json:"count_links"`
+	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "api v1")
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		resp := response{
+			Apiname:    "mycoll",
+			Version:    "v1",
+			Countusers: srv.db.CountUsers(),
+			Countlinks: srv.db.CountLinks(),
+		}
+		json.NewEncoder(w).Encode(&resp)
 	}
 }
 
