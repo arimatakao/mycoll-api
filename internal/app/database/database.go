@@ -85,12 +85,12 @@ func (c *Connection) GetUserNamePassword(name string) (string, string) {
 	return user.Name, user.Password
 }
 
-func (c *Connection) DeleteUser(name, passwordHash string) int {
-	result, err := c.users.DeleteOne(context.TODO(), bson.D{{"name", name}, {"password", passwordHash}})
+func (c *Connection) DeleteUser(name string) int64 {
+	result, err := c.users.DeleteOne(context.TODO(), bson.D{{"name", name}})
 	if err != nil {
 		return 0
 	}
-	return int(result.DeletedCount)
+	return result.DeletedCount
 }
 
 func (c *Connection) CountUsers() int64 {
