@@ -88,13 +88,13 @@ func (srv *APIServer) handleSignin() http.HandlerFunc {
 		dbname, dbpassword := srv.db.GetUserNamePassword(req.Name)
 		if dbname != req.Name {
 			w.WriteHeader(http.StatusBadRequest)
-			io.WriteString(w, `{ "error": "Wrong username or password2" }`)
+			io.WriteString(w, `{ "error": "Wrong username or password" }`)
 			return
 		}
 		err = bcrypt.CompareHashAndPassword([]byte(dbpassword), []byte(req.Password))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			io.WriteString(w, `{ "error": "Wrong username or password3" }`)
+			io.WriteString(w, `{ "error": "Wrong username or password" }`)
 			return
 		}
 
@@ -117,13 +117,20 @@ func (srv *APIServer) handleDeleteUser() http.HandlerFunc {
 			io.WriteString(w, `{ "error": "Wrong json" }`)
 			return
 		}
-		hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), 0)
-		if err != nil {
+		dbname, dbpassword := srv.db.GetUserNamePassword(req.Name)
+		if dbname != req.Name {
 			w.WriteHeader(http.StatusBadRequest)
-			io.WriteString(w, `{ "error": "Something wrong" }`)
+			io.WriteString(w, `{ "error": "Wrong username or password" }`)
 			return
 		}
-		countDeleted := srv.db.DeleteUser(req.Name, string(hash))
+		err = bcrypt.CompareHashAndPassword([]byte(dbpassword), []byte(req.Password))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			io.WriteString(w, `{ "error": "Wrong username or password" }`)
+			return
+		}
+
+		countDeleted := srv.db.DeleteUser(req.Name)
 		if countDeleted < 1 {
 			w.WriteHeader(http.StatusBadRequest)
 			io.WriteString(w, `{ "error": "Something wrong" }`)
