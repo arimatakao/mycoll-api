@@ -69,16 +69,17 @@ func (c *Connection) CreateUser(name, passwordHash string) (interface{}, error) 
 }
 
 func (c *Connection) IsUserExist(name string) bool {
-	res := c.links.FindOne(context.TODO(), bson.D{{"name", name}})
-	return res.Err() != nil
+	res := c.users.FindOne(context.TODO(), bson.D{{"name", name}})
+	return res.Err() == nil
 }
 
 func (c *Connection) GetUserNamePassword(name, passwordHash string) (string, string) {
 	var user User
-	err := c.users.FindOne(context.TODO(), bson.D{{"name", name}, {"password", passwordHash}}).Decode(user)
+	err := c.users.FindOne(context.TODO(), bson.D{{"name", name}, {"password", passwordHash}}).Decode(&user)
 	if err != nil {
 		return "", ""
 	}
+	log.Println(user.Name, user.Password)
 	return user.Name, user.Password
 }
 
