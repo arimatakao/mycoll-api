@@ -5,15 +5,16 @@ import (
 )
 
 type Links struct {
-	Id          primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
-	IdOwner     primitive.ObjectID `json:"id_owner" bson:"_id,omitempty"`
-	Title       string             `json:"title" bson:"name,omitempty"`
-	Links       []string           `json:"links" bson:"links,omitempty"`
-	Description string             `json:"description" bson:"description,omitempty"`
+	Id          primitive.ObjectID `json:"_id" bson:"_id"`
+	IdOwner     primitive.ObjectID `json:"id_owner" bson:"_id"`
+	Title       string             `json:"title,omitempty" bson:"name,omitempty"`
+	Tags        string             `json:"tags,omitempty" bson:"tags,omitempty"`
+	Description string             `json:"description,omitempty" bson:"description,omitempty"`
+	Links       []string           `json:"links,omitempty" bson:"links,omitempty"`
 }
 
 type User struct {
-	Id       primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
-	Name     string             `json:"name" bson:"name,omitempty"`
-	Password string             `json:"password" bson:"password,omitempty"`
+	Id       primitive.ObjectID `json:"_id" bson:"_id"`
+	Name     string             `json:"name" bson:"name"`
+	Password string             `json:"password" bson:"password"`
 }
