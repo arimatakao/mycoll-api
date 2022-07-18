@@ -32,7 +32,7 @@ func NewConnection(ctx context.Context, uri string) *Connection {
 	}
 }
 
-func (c *Connection) CreateGroupLinks(idOwner, title string, links []string, description string) (int, error) {
+func (c *Connection) CreateGroupLinks(idOwner, title string, tags []string, description string, links []string) (int, error) {
 	return 0, nil
 }
 
