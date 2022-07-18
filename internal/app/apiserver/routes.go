@@ -43,7 +43,7 @@ func (srv *APIServer) handleSignup() http.HandlerFunc {
 			return
 		}
 
-		if !srv.db.IsUserExist(req.Name) {
+		if srv.db.IsUserExist(req.Name) {
 			w.WriteHeader(http.StatusBadRequest)
 			io.WriteString(w, `{ "error": "User is already exist" }`)
 			return
@@ -79,18 +79,25 @@ func (srv *APIServer) handleSignin() http.HandlerFunc {
 			return
 		}
 
-		hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), 0)
-		if err != nil {
+		if !srv.db.IsUserExist(req.Name) {
 			w.WriteHeader(http.StatusBadRequest)
 			io.WriteString(w, `{ "error": "Something wrong" }`)
 			return
 		}
-		dbname, dbpassword := srv.db.GetUserNamePassword(req.Name, req.Password)
-		if dbname == req.Name || dbpassword == string(hash) {
+
+		dbname, dbpassword := srv.db.GetUserNamePassword(req.Name)
+		if dbname != req.Name {
 			w.WriteHeader(http.StatusBadRequest)
-			io.WriteString(w, `{ "error": "Wrong username or password" }`)
+			io.WriteString(w, `{ "error": "Wrong username or password2" }`)
 			return
 		}
+		err = bcrypt.CompareHashAndPassword([]byte(dbpassword), []byte(req.Password))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			io.WriteString(w, `{ "error": "Wrong username or password3" }`)
+			return
+		}
+
 		io.WriteString(w, `{ "accessToken": "`+srv.newToken(req.Name)+`" }`)
 		srv.logger.Info("Token issued")
 	}
