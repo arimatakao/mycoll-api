@@ -73,9 +73,11 @@ func (c *Connection) IsUserExist(name string) bool {
 	return res.Err() == nil
 }
 
-func (c *Connection) GetUserNamePassword(name, passwordHash string) (string, string) {
+func (c *Connection) GetUserNamePassword(name string) (string, string) {
 	var user User
-	err := c.users.FindOne(context.TODO(), bson.D{{"name", name}, {"password", passwordHash}}).Decode(&user)
+	err := c.users.FindOne(context.TODO(),
+		bson.D{{"name", name}}).
+		Decode(&user)
 	if err != nil {
 		return "", ""
 	}
