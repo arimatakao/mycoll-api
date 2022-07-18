@@ -4,7 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Links struct {
+type GroupLinks struct {
 	Id          primitive.ObjectID `json:"_id" bson:"_id"`
 	IdOwner     primitive.ObjectID `json:"id_owner" bson:"_id"`
 	Title       string             `json:"title,omitempty" bson:"name,omitempty"`

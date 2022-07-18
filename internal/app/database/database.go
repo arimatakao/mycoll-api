@@ -32,27 +32,27 @@ func NewConnection(ctx context.Context, uri string) *Connection {
 	}
 }
 
-func (c *Connection) CreateLinks(idOwner, title string, links []string, description string) (int, error) {
+func (c *Connection) CreateGroupLinks(idOwner, title string, links []string, description string) (int, error) {
 	return 0, nil
 }
 
-func (c *Connection) FindLinksById(id string) (int, error) {
+func (c *Connection) FindGroupLinksById(id string) (int, error) {
 	return 0, nil
 }
 
-func (c *Connection) FindLinksByIdOwner(idOwner string) (int, error) {
+func (c *Connection) FindGroupLinksByIdOwner(idOwner string) (int, error) {
 	return 0, nil
 }
 
-func (c *Connection) UpdateLinksById(id int) (int, error) {
+func (c *Connection) UpdateGroupLinksById(id int) (int, error) {
 	return 0, nil
 }
 
-func (c *Connection) DeleteLinksById(id int) (int, error) {
+func (c *Connection) DeleteGroupLinksById(id int) (int, error) {
 	return 0, nil
 }
 
-func (c *Connection) CountLinks() int64 {
+func (c *Connection) CountGroupLinks() int64 {
 	result, err := c.links.CountDocuments(context.TODO(), bson.D{})
 	if err != nil {
 		return 0
@@ -82,6 +82,17 @@ func (c *Connection) GetUserNamePassword(name string) (string, string) {
 		return "", ""
 	}
 	return user.Name, user.Password
+}
+
+func (c *Connection) GetUserId(name string) string {
+	var user User
+	err := c.users.FindOne(context.TODO(),
+		bson.D{{"name", name}}).
+		Decode(&user)
+	if err != nil {
+		return ""
+	}
+	return user.Id.String()
 }
 
 func (c *Connection) DeleteUser(name string) int64 {
