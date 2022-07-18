@@ -52,6 +52,14 @@ func (c *Connection) DeleteLinksById(id int) (int, error) {
 	return 0, nil
 }
 
+func (c *Connection) CountLinks() int64 {
+	result, err := c.links.CountDocuments(context.TODO(), bson.D{})
+	if err != nil {
+		return 0
+	}
+	return result
+}
+
 func (c *Connection) CreateUser(name, passwordHash string) (interface{}, error) {
 	result, err := c.users.InsertOne(context.TODO(), bson.D{{"name", name}, {"password", passwordHash}})
 	if err != nil {
@@ -80,4 +88,12 @@ func (c *Connection) DeleteUser(name, passwordHash string) int {
 		return 0
 	}
 	return int(result.DeletedCount)
+}
+
+func (c *Connection) CountUsers() int64 {
+	result, err := c.users.CountDocuments(context.TODO(), bson.D{})
+	if err != nil {
+		return 0
+	}
+	return result
 }
