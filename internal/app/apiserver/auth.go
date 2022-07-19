@@ -1,19 +1,15 @@
 package apiserver
 
 import (
+	"errors"
+	"net/http"
+	"strings"
+
 	"github.com/golang-jwt/jwt/v4"
 )
 
-type tokenClaims struct {
-	jwt.StandardClaims
-	Id string `json:"_id" bson:"_id"`
-}
-
-func (srv APIServer) newToken(Id string) string {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
-		jwt.StandardClaims{},
-		Id,
-	})
+func (srv *APIServer) newToken(id string) string {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{ID: id})
 	tokenStr, err := token.SignedString([]byte(srv.cfg.SecretKey))
 	if err != nil {
 		srv.logger.Error("Fail to generate token")
@@ -23,30 +19,28 @@ func (srv APIServer) newToken(Id string) string {
 	return tokenStr
 }
 
-func (srv APIServer) isTokenValid(jwttoken string) bool {
-	token, err := jwt.ParseWithClaims(
-		jwttoken,
-		jwt.StandardClaims{},
-		func(token *jwt.Token) (interface{}, error) {
-			return []byte(srv.cfg.SecretKey), nil
-		},
-	)
-	if err != nil {
-		return false
+func (srv *APIServer) parseTokenFromHeader(r *http.Request) (string, bool) {
+	header, ok := r.Header["Authorization"]
+	if !ok {
+		return "", false
 	}
-	return token.Valid
-}
+	tokenStr := strings.Split(header[0], " ")
+	if len(tokenStr) != 2 || tokenStr[0] != "Bearer" {
+		return "", false
+	}
 
-func (srv APIServer) getClaimsFromJWT(jwttoken string) (jwt.MapClaims, error) {
-	token, err := jwt.Parse(jwttoken,
-		func(token *jwt.Token) (interface{}, error) {
-			return []byte(srv.cfg.SecretKey), nil
-		})
-	if err != nil {
-		return nil, err
+	t, err := jwt.ParseWithClaims(tokenStr[1], &jwt.RegisteredClaims{}, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid signing method")
+		}
+		return []byte(srv.cfg.SecretKey), nil
+	})
+	if !t.Valid || err != nil {
+		return "", false
 	}
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		return claims, nil
+	claims, ok := t.Claims.(*jwt.RegisteredClaims)
+	if !ok {
+		return "", false
 	}
-	return nil, err
+	return claims.ID, true
 }
