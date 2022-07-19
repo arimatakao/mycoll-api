@@ -32,24 +32,48 @@ func NewConnection(ctx context.Context, uri string) *Connection {
 	}
 }
 
-func (c *Connection) CreateGroupLinks(idOwner, title string, tags []string, description string, links []string) (int, error) {
-	return 0, nil
+func (c *Connection) CreateGroupLinks(idOwner, title string, tags []string, description string, links []string) (interface{}, error) {
+	result, err := c.links.InsertOne(context.TODO(),
+		bson.D{{Key: "id_owner", Value: idOwner},
+			{Key: "title", Value: title},
+			{Key: "tags", Value: tags},
+			{Key: "description", Value: description},
+			{Key: "links", Value: links}})
+	if err != nil {
+		return "", err
+	}
+	return result.InsertedID, nil
 }
 
-func (c *Connection) FindGroupLinksById(id string) (int, error) {
-	return 0, nil
+func (c *Connection) FindGroupLinksById(id string) (title string, tags []string, description string, links []string) {
+	var grouplinks GroupLinks
+	c.links.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(&grouplinks)
+	return grouplinks.Title, grouplinks.Tags, grouplinks.Description, grouplinks.Links
 }
 
-func (c *Connection) FindGroupLinksByIdOwner(idOwner string) (int, error) {
-	return 0, nil
+func (c *Connection) FindGroupLinksByIdOwner(idOwner string) (id, title string, tags []string, description string, links []string) {
+	var grouplinks GroupLinks
+	c.links.FindOne(context.TODO(), bson.D{{Key: "id_owner", Value: idOwner}}).Decode(&grouplinks)
+	return grouplinks.Id.String(), grouplinks.Title, grouplinks.Tags, grouplinks.Description, grouplinks.Links
 }
 
-func (c *Connection) UpdateGroupLinksById(id int) (int, error) {
-	return 0, nil
+func (c *Connection) UpdateGroupLinksById(id, title string, tags []string, description string, links []string) (int, error) {
+	result, err := c.links.UpdateByID(context.TODO(), id, bson.D{{Key: "title", Value: title},
+		{Key: "tags", Value: tags},
+		{Key: "description", Value: description},
+		{Key: "links", Value: links}})
+	if err != nil {
+		return 0, err
+	}
+	return int(result.ModifiedCount), nil
 }
 
 func (c *Connection) DeleteGroupLinksById(id int) (int, error) {
-	return 0, nil
+	result, err := c.links.DeleteOne(context.TODO(), bson.D{{Key: "_id", Value: id}})
+	if err != nil {
+		return 0, err
+	}
+	return int(result.DeletedCount), nil
 }
 
 func (c *Connection) CountGroupLinks() int64 {
@@ -61,7 +85,8 @@ func (c *Connection) CountGroupLinks() int64 {
 }
 
 func (c *Connection) CreateUser(name, passwordHash string) (interface{}, error) {
-	result, err := c.users.InsertOne(context.TODO(), bson.D{{"name", name}, {"password", passwordHash}})
+	result, err := c.users.InsertOne(context.TODO(), bson.D{{Key: "name", Value: name},
+		{Key: "password", Value: passwordHash}})
 	if err != nil {
 		return result.InsertedID, err
 	}
@@ -69,14 +94,14 @@ func (c *Connection) CreateUser(name, passwordHash string) (interface{}, error) 
 }
 
 func (c *Connection) IsUserExist(name string) bool {
-	res := c.users.FindOne(context.TODO(), bson.D{{"name", name}})
+	res := c.users.FindOne(context.TODO(), bson.D{{Key: "name", Value: name}})
 	return res.Err() == nil
 }
 
 func (c *Connection) GetUserNamePassword(name string) (string, string) {
 	var user User
 	err := c.users.FindOne(context.TODO(),
-		bson.D{{"name", name}}).
+		bson.D{{Key: "name", Value: name}}).
 		Decode(&user)
 	if err != nil {
 		return "", ""
@@ -87,7 +112,7 @@ func (c *Connection) GetUserNamePassword(name string) (string, string) {
 func (c *Connection) GetUserId(name string) string {
 	var user User
 	err := c.users.FindOne(context.TODO(),
-		bson.D{{"name", name}}).
+		bson.D{{Key: "name", Value: name}}).
 		Decode(&user)
 	if err != nil {
 		return ""
@@ -96,7 +121,7 @@ func (c *Connection) GetUserId(name string) string {
 }
 
 func (c *Connection) DeleteUser(name string) int64 {
-	result, err := c.users.DeleteOne(context.TODO(), bson.D{{"name", name}})
+	result, err := c.users.DeleteOne(context.TODO(), bson.D{{Key: "name", Value: name}})
 	if err != nil {
 		return 0
 	}
