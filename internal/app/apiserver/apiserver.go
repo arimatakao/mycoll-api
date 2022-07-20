@@ -58,3 +58,14 @@ func (srv *APIServer) configureRouter() {
 	srv.router.HandleFunc("/api/v1/updatelinks", srv.handleUpdateLinks()).Methods("PUT")
 	srv.router.HandleFunc("/api/v1/deletelinks", srv.handleDeleteLinks()).Methods("DELETE")
 }
+
+func (srv *APIServer) Shutdown() error {
+	srv.logger.Warningln("Server shutdown")
+	err := srv.db.Shutdown()
+	if err != nil {
+		srv.logger.Fatalln("Cannot shutdown connection to db: ", err)
+		return err
+	}
+	srv.logger.Warningln("Success shutdown")
+	return nil
+}
