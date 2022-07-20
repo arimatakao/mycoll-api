@@ -2,7 +2,11 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/BurntSushi/toml"
 	"github.com/arimatakao/mycoll-api/internal/app/apiserver"
@@ -24,7 +28,16 @@ func main() {
 	}
 
 	s := apiserver.New(config)
-	if err := s.Start(); err != nil {
-		log.Fatal(err)
+	go func() {
+		if err := s.Start(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	if err := s.Shutdown(); err != nil {
+		fmt.Println("ERROR: ", err.Error())
 	}
 }
