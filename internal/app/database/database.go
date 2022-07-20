@@ -38,10 +38,6 @@ func (c *Connection) Shutdown() error {
 	if err != nil {
 		return err
 	}
-	err = c.users.Database().Client().Disconnect(context.TODO())
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
