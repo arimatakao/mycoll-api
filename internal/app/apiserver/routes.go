@@ -124,7 +124,7 @@ func (srv *APIServer) handleDeleteUser() http.HandlerFunc {
 
 		srv.logger.Info("One user was deleted")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"massage":             "Success",
+			"message":             "Success",
 			"count_deleted_links": countDeletedLinks,
 		})
 	}
@@ -158,7 +158,7 @@ func (srv *APIServer) handleCreateLinks() http.HandlerFunc {
 		}
 		srv.logger.Info("Created new group links")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"massage": resultid,
+			"message": resultid,
 		})
 	}
 }
